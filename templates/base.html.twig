@@ -11,6 +11,16 @@
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <header>
+            {% block navbar %}
+                {{ include('includes/_navbar.html.twig', {current: app.current_route}, with_context = false) }}
+            {% endblock %}
+        </header>
+        <main class="container pt-5">
+            {% block body %}{% endblock %}
+        </main>
+        <footer>
+            {{ render_esi(controller('App\\Controller\\MovieController::decades')) }}
+        </footer>
     </body>
 </html>

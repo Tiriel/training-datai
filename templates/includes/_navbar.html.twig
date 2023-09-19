@@ -1,0 +1,13 @@
+{% from 'includes/_macros.html.twig' import navlink %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ path('app_main_index') }}">Sensio TV+</a>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            {{ navlink(current, 'app_main_index', 'Home') }}
+            {{ navlink(current, 'app_movie_index', 'Movie') }}
+            {{ navlink(current, 'app_book_index', 'Book') }}
+            {{ navlink(current, 'app_main_contact', 'Contact') }}
+        </ul>
+    </div>
+</nav>
