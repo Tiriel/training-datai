@@ -1,0 +1,8 @@
+ ---------------- -------- -------- ------ ------------- ---------------------------------------- 
+  Name             Method   Scheme   Host   Path          Controller                              
+ ---------------- -------- -------- ------ ------------- ---------------------------------------- 
+  app_book_index   GET      ANY      ANY    /book         App\Controller\BookController::index()  
+  app_book_show    ANY      ANY      ANY    /book/{!id}   App\Controller\BookController::show()   
+  app_get_song     ANY      ANY      ANY    /song         App\Controller\GetSongController()      
+ ---------------- -------- -------- ------ ------------- ---------------------------------------- 
+

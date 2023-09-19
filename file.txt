@@ -1,0 +1,8 @@
+ ---------------- -------- -------- ------ ------------- 
+  Name             Method   Scheme   Host   Path         
+ ---------------- -------- -------- ------ ------------- 
+  app_book_index   GET      ANY      ANY    /book        
+  app_book_show    ANY      ANY      ANY    /book/{!id}  
+  app_get_song     ANY      ANY      ANY    /song        
+ ---------------- -------- -------- ------ ------------- 
+
