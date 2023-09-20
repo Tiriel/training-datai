@@ -1,16 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MovieController!{% endblock %}
+{% block title %}Movie : {{ movie is not null ? movie.title : 'Not found' }}{% endblock %}
 
 {% block body %}
 <div class="example-wrapper">
-    <h1>Movie : {{ movie.title }}</h1>
+    {% if movie is not null %}
+        <h1>Movie : {{ movie.title }}</h1>
 
-    <ul>
-        <li>Id: {{ movie.id }}</li>
-        <li>Country: {{ movie.country }}</li>
-        <li>ReleasedAt: {{ movie.releasedAt|date('d M Y') }}</li>
-        <li>Genre: {{ movie.genre|join(', ') }}</li>
-    </ul>
+        <img class="float-end" src="{{ movie.poster }}" alt="{{ movie.title }} poster">
+        <ul>
+            <li>Id: {{ movie.id }}</li>
+            <li>Country: {{ movie.country }}</li>
+            <li>ReleasedAt: {{ movie.releasedAt|date('d M Y') }}</li>
+            <li>Plot: {{ movie.plot }}</li>
+            {# <li>Genre: {{ movie.genre|join(', ') }}</li> #}
+        </ul>
+    {% else %}
+        <h1>Movie not found.</h1>
+    {% endif %}
 </div>
 {% endblock %}
