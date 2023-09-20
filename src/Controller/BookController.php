@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Book;
 use App\Form\BookType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -18,8 +21,8 @@ class BookController extends AbstractController
         ]);
     }
 
-    #[Route('/{!id<\d+>?1}', name: 'app_book_show')]
-    public function show(int $id): Response
+    #[Route('/{!id?1}', name: 'app_book_show')]
+    public function show(string $id): Response
     {
         return $this->render('book/index.html.twig', [
             'controller_name' => 'BookController - id : '.$id,
@@ -27,9 +30,18 @@ class BookController extends AbstractController
     }
 
     #[Route('/new', name: 'app_book_new')]
-    public function save(): Response
+    public function save(Request $request, EntityManagerInterface $manager): Response
     {
-        $form = $this->createForm(BookType::class);
+        $book = new Book();
+        $form = $this->createForm(BookType::class, $book);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted()&&$form->isValid()) {
+            $manager->persist($book);
+            $manager->flush();
+
+            return $this->redirectToRoute('app_book_show', ['id' => $book->getId()]);
+        }
 
         return $this->render('book/save.html.twig', [
             'form' => $form,

@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title 'Accueil' %}
+
+{% block body %}
+    <section>
+        <h1 class="text-center">Contact</h1>
+
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit" class="btn btn-primary">Send</button>
+        {{ form_end(form) }}
+    </section>
+{% endblock %}
