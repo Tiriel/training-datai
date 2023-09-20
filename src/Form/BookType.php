@@ -4,6 +4,12 @@ namespace App\Form;
 
 use App\Entity\Book;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -12,12 +18,22 @@ class BookType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title')
-            ->add('author')
-            ->add('isbn')
-            ->add('price')
-            ->add('releasedAt')
-            ->add('plot')
+            ->add('title', TextType::class)
+            ->add('author', TextType::class)
+            ->add('isbn', TextType::class)
+            ->add('price', NumberType::class, [
+                'scale' => 100,
+            ])
+            ->add('releasedAt', DateType::class, [
+                'input' => 'datetime_immutable',
+                'widget' => 'single_text',
+            ])
+            ->add('plot', TextareaType::class)
+            ->add('terms', CheckboxType::class, [
+                'mapped' => false,
+                'required' => true,
+                'label' => 'I agree to the terms & conditions.',
+            ])
         ;
     }
 
