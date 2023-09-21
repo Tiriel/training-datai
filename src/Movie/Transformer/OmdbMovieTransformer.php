@@ -18,8 +18,6 @@ class OmdbMovieTransformer implements DataTransformerInterface
         'Genre',
     ];
 
-    public function __construct(private readonly OmdbGenreTransformer $genreTransformer) {}
-
     public function transform(mixed $value)
     {
         if (!\is_array($value) || \count(\array_diff(self::KEYS, \array_keys($value))) > 0) {
@@ -36,11 +34,6 @@ class OmdbMovieTransformer implements DataTransformerInterface
             ->setPoster($value['Poster'])
             ->setPrice(5.0)
         ;
-
-        foreach (explode(', ', $value['Genre']) as $genreName) {
-            $genre = $this->genreTransformer->transform($genreName);
-            $movie->addGenre($genre);
-        }
 
         return $movie;
     }

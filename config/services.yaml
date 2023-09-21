@@ -5,6 +5,8 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     app.items_per_page: 20
+    database_default_value: default_value
+    sf_version: '%env(key:require:key:symfony:key:extra:json:file:resolve:COMPOSER_PATH)%'
 
 services:
     # default configuration for services in *this* file
