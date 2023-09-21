@@ -16,6 +16,8 @@ class OmdbMovieTransformer implements DataTransformerInterface
         'Country',
         'Poster',
         'Genre',
+        'Rated',
+        'imdbID'
     ];
 
     public function transform(mixed $value)
@@ -32,6 +34,8 @@ class OmdbMovieTransformer implements DataTransformerInterface
             ->setCountry($value['Country'])
             ->setReleasedAt(new \DateTimeImmutable($date))
             ->setPoster($value['Poster'])
+            ->setRated($value['Rated'])
+            ->setImdbId($value['imdbID'])
             ->setPrice(5.0)
         ;
 
