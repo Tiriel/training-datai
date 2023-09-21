@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Book\BookManager;
 use App\Entity\Book;
 use App\Form\BookType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,8 +23,10 @@ class BookController extends AbstractController
     }
 
     #[Route('/{!id?1}', name: 'app_book_show')]
-    public function show(string $id): Response
+    public function show(string $id, BookManager $manager): Response
     {
+        $book = $manager->findBookById($id);
+        
         return $this->render('book/index.html.twig', [
             'controller_name' => 'BookController - id : '.$id,
         ]);
