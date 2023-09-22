@@ -3,10 +3,12 @@
 namespace App\Movie\Provider;
 
 use App\Entity\Movie;
+use App\Entity\User;
 use App\Movie\OmdbApiConsumer;
 use App\Movie\SearchTypeEnum;
 use App\Movie\Transformer\OmdbMovieTransformer;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class MovieProvider
@@ -18,6 +20,7 @@ class MovieProvider
         private readonly EntityManagerInterface $manager,
         private readonly OmdbMovieTransformer $movieTransformer,
         private readonly GenreProvider $genreProvider,
+        private readonly Security $security,
     ) {}
 
     public function getMovieByTitle(string $title): Movie
@@ -39,6 +42,10 @@ class MovieProvider
         $movie = $this->movieTransformer->transform($data);
         foreach ($this->genreProvider->getGenreFromOmdbString($data['Genre']) as $genre) {
             $movie->addGenre($genre);
+        }
+
+        if (($user = $this->security->getUser()) instanceof User) {
+            $movie->setCreatedBy($user);
         }
 
         $this->io?->note('Saving movie in database!');

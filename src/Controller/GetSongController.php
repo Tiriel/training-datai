@@ -11,6 +11,8 @@ class GetSongController extends AbstractController
 {
     public function __invoke()
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         return new Response('Yay');
     }
 }

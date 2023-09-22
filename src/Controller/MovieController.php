@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Movie;
+use App\Entity\User;
 use App\Form\MovieType;
 use App\Movie\OmdbApiConsumer;
 use App\Movie\Provider\MovieProvider;
 use App\Movie\SearchTypeEnum;
 use App\Movie\Transformer\OmdbMovieTransformer;
 use App\Repository\MovieRepository;
+use App\Security\Voter\MovieVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,6 +31,8 @@ class MovieController extends AbstractController
     #[Route('/{id<\d+>}', name: 'app_movie_show')]
     public function show(?Movie $movie): Response
     {
+        $this->denyAccessUnlessGranted(MovieVoter::VIEW, $movie);
+        
         return $this->render('movie/show.html.twig', [
             'movie' => $movie,
         ]);
@@ -37,8 +41,11 @@ class MovieController extends AbstractController
     #[Route('/omdb/{title}', name: 'app_movie_omdb', methods: ['GET'])]
     public function omdb(string $title, MovieProvider $provider): Response
     {
+        $movie = $provider->getMovieByTitle($title);
+        $this->denyAccessUnlessGranted(MovieVoter::VIEW, $movie);
+
         return $this->render('movie/show.html.twig', [
-            'movie' => $provider->getMovieByTitle($title),
+            'movie' => $movie,
         ]);
     }
 
@@ -46,11 +53,17 @@ class MovieController extends AbstractController
     #[Route('/{id<\d+>}/edit', name: 'app_movie_edit')]
     public function save(Request $request, ?Movie $movie, EntityManagerInterface $manager): Response
     {
+        if ($movie) {
+            $this->denyAccessUnlessGranted(MovieVoter::EDIT, $movie);
+        }
         $movie ??= new Movie();
         $form = $this->createForm(MovieType::class, $movie);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            if (!$movie->getId() && ($user = $this->getUser()) instanceof User) {
+                $movie->setCreatedBy($user);
+            }
             $manager->persist($movie);
             $manager->flush();
 

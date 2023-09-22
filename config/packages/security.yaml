@@ -3,15 +3,51 @@ security:
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+
+    role_hierarchy:
+        ROLE_USER: ~
+        ROLE_MODERATOR: ROLE_USER
+        ROLE_PROVIDER: ROLE_USER
+        ROLE_TERMINATOR: ROLE_MODERATOR
+        ROLE_ADMIN:
+            - ROLE_PROVIDER
+            - ROLE_TERMINATOR
+    
+    access_decision_manager:
+        allow_if_all_abstain: false
+        allow_if_equal_granted_denied: false
+        strategy: affirmative # priority, consensus, unanimous
+
     providers:
-        users_in_memory: { memory: null }
+        # used to reload user from session & other features (e.g. switch_user)
+        app_admin_provider:
+            memory:
+                users:
+                    admin@admin.com: { password: '%env(ADMIN_PWD)%', roles: ['ROLE_USER', 'ROLE_ADMIN'] }
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+        app_all_users:
+            chain:
+                providers: [app_admin_provider, app_user_provider]
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
-            provider: users_in_memory
+            provider: app_all_users
+            custom_authenticator: App\Security\AppLoginFormAuthenticator
+            logout:
+                path: app_security_logout
+                target: app_main_index
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+                always_remember_me: true
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -22,7 +58,9 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: ROLE_USER }
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:

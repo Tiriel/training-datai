@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Book\BookManager;
 use App\Entity\Book;
 use App\Form\BookType;
+use App\Security\Voter\BookVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +27,8 @@ class BookController extends AbstractController
     public function show(string $id, BookManager $manager): Response
     {
         $book = $manager->findBookById($id);
-        
+        $this->denyAccessUnlessGranted(BookVoter::VIEW, $book);
+
         return $this->render('book/index.html.twig', [
             'controller_name' => 'BookController - id : '.$id,
         ]);
@@ -36,6 +38,7 @@ class BookController extends AbstractController
     public function save(Request $request, EntityManagerInterface $manager): Response
     {
         $book = new Book();
+        $this->denyAccessUnlessGranted(BookVoter::CREATE, $book);
         $form = $this->createForm(BookType::class, $book);
 
         $form->handleRequest($request);
